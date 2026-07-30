@@ -25,12 +25,12 @@ const handleHeroParallax = () => {
     const opacityText = 1 - progress * 0.65;
     
     if (textTop) {
-      textTop.style.transform = `translate3d(${-moveX}px, 0, 0) scale(${scaleText})`;
+      textTop.style.transform = `translate3d(${-moveX}px, 0, 0)`;
       textTop.style.opacity = opacityText;
       textTop.style.color = progress > 0.15 ? '#9E6A6A' : '#6B1C1C';
     }
     if (textBottom) {
-      textBottom.style.transform = `translate3d(${moveX}px, 0, 0) scale(${scaleText})`;
+      textBottom.style.transform = `translate3d(${moveX}px, 0, 0)`;
       textBottom.style.opacity = opacityText;
       textBottom.style.color = progress > 0.15 ? '#9E6A6A' : '#6B1C1C';
     }
