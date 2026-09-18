@@ -118,8 +118,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   transition: color 0.3s ease;
 }
 
-.text-top    { font-size: clamp(80px, 22vw, 270px); }
-.text-bottom { font-size: clamp(70px, 19vw, 240px); }
+.text-top    { font-size: clamp(52px, 20vw, 270px); }
+.text-bottom { font-size: clamp(44px, 17vw, 240px); }
 
 .profile-stage {
   position: relative;
@@ -133,10 +133,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 .hero-profile-img {
-  height: clamp(380px, 85vh, 880px);
+  height: clamp(440px, 98vh, 1080px);
+  max-height: 100vh;
   width: auto;
+  max-width: 95vw;
   object-fit: contain;
-  filter: drop-shadow(0 0 35px rgba(107, 28, 28, 0.25)) drop-shadow(0 20px 60px rgba(0, 0, 0, 0.45));
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 4px 24px rgba(107, 28, 28, 0.18)) drop-shadow(0 16px 48px rgba(0, 0, 0, 0.30));
   transform: translateY(16px);
   will-change: transform;
 }
@@ -819,18 +822,60 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
    RESPONSIVE OVERRIDES
    ============================================================ */
 @media (max-width: 768px) {
+  /* Nav */
   .pill-nav { padding: 4px 8px; }
   .pill-link span { display: none; }
   .pill-link { padding: 10px 14px; }
-  .text-top    { font-size: clamp(65px, 24vw, 120px); }
-  .text-bottom { font-size: clamp(55px, 20vw, 100px); }
-  .hero-profile-img { height: 75vh; }
+
+  /* Hero giant text */
+  .text-top    { font-size: clamp(52px, 18vw, 110px); }
+  .text-bottom { font-size: clamp(42px, 15vw, 94px); }
+
+  /* Hero profile image — smaller on tablets */
+  .hero-profile-img {
+    height: clamp(240px, 60vh, 540px);
+    max-height: 72vh;
+  }
+
+  /* Cards */
   .service-card { padding: 32px 24px; }
   .service-card.featured { transform: translateY(0); }
   .service-card.featured:hover { transform: translateY(-6px); }
+
+  /* Skills tabs */
   .tab-button-wrap { width: 60px; }
   .tab-icon-btn { width: 52px; height: 52px; border-radius: 16px; }
   .tab-label { font-size: 0.6rem; }
+
+  /* Contact grid single-column */
+  .contact-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  /* Hero giant text — very small phones */
+  .text-top    { font-size: clamp(44px, 16vw, 80px); letter-spacing: -0.04em; }
+  .text-bottom { font-size: clamp(36px, 13.5vw, 68px); letter-spacing: -0.04em; }
+
+  /* Profile image stays visible but compact */
+  .hero-profile-img {
+    height: clamp(210px, 55vh, 400px);
+    max-height: 65vh;
+  }
+
+  /* Give profile stage a bit more breathing room at the bottom */
+  .profile-stage {
+    padding-bottom: 0;
+  }
+
+  /* Intro section spacing */
+  .intro-section { padding: var(--sp-10) var(--sp-2) var(--sp-6); }
+
+  /* Skills item grid single column */
+  .skill-items-grid { grid-template-columns: 1fr; }
+
+  /* Intro CTA buttons stack nicely */
+  .intro-cta { flex-direction: column !important; align-items: stretch !important; }
+  .btn-primary-gradient { text-align: center; }
 }
 
 /* Custom Scrollbar */

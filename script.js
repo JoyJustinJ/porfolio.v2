@@ -19,8 +19,8 @@ const handleHeroParallax = () => {
   if (!prefersReducedMotion && scrollY <= viewportHeight * 1.5) {
     const progress = Math.min(1, scrollY / viewportHeight);
     
-    // Split text outwardly just like in Image 2 ("AFRIT... / SULTHAN")
-    const moveX = progress * 320; 
+    // Split text outwardly — capped at 40vw so it never flies off narrow screens
+    const moveX = progress * Math.min(320, window.innerWidth * 0.40); 
     const scaleText = 1 + progress * 0.45;
     const opacityText = 1 - progress * 0.65;
     
