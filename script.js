@@ -9,20 +9,23 @@ const textTop = document.getElementById('parallax-text-top');
 const textBottom = document.getElementById('parallax-text-bottom');
 const profileImg = document.getElementById('parallax-profile-img');
 const fixedHeroBg = document.querySelector('.fixed-hero-bg');
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Cross-browser scroll position helper
+const getScrollY = () => {
+  return window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+};
 
 const handleHeroParallax = () => {
-  const scrollY = window.scrollY;
-  const viewportHeight = window.innerHeight;
+  const scrollY = getScrollY();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
 
-  // Only run animations if within the hero viewport and motion is enabled
-  if (!prefersReducedMotion && scrollY <= viewportHeight * 1.5) {
-    const progress = Math.min(1, scrollY / viewportHeight);
+  // Run animations while within hero range
+  if (scrollY <= viewportHeight * 1.5) {
+    const progress = Math.min(1, Math.max(0, scrollY / viewportHeight));
     
     // Split text outwardly — capped at 40vw so it never flies off narrow screens
     const moveX = progress * Math.min(320, window.innerWidth * 0.40); 
-    const scaleText = 1 + progress * 0.45;
-    const opacityText = 1 - progress * 0.65;
+    const opacityText = Math.max(0, 1 - progress * 0.65);
     
     if (textTop) {
       textTop.style.transform = `translate3d(${-moveX}px, 0, 0)`;
@@ -43,15 +46,32 @@ const handleHeroParallax = () => {
     if (fixedHeroBg) {
       fixedHeroBg.style.visibility = 'visible';
     }
-  } else if (scrollY > viewportHeight * 1.5 && fixedHeroBg) {
+  } else if (fixedHeroBg) {
     // Hide fixed layer once scrolled past to save GPU drawing cycles
     fixedHeroBg.style.visibility = 'hidden';
   }
 };
 
-window.addEventListener('scroll', handleHeroParallax, { passive: true });
-window.addEventListener('resize', handleHeroParallax, { passive: true });
-handleHeroParallax();
+// High-refresh rate (144Hz / 165Hz) rAF throttling for Lenovo LOQ gaming displays
+let parallaxTicking = false;
+const requestParallaxTick = () => {
+  if (!parallaxTicking) {
+    window.requestAnimationFrame(() => {
+      handleHeroParallax();
+      parallaxTicking = false;
+    });
+    parallaxTicking = true;
+  }
+};
+
+window.addEventListener('scroll', requestParallaxTick, { passive: true });
+window.addEventListener('resize', requestParallaxTick, { passive: true });
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleHeroParallax);
+} else {
+  handleHeroParallax();
+}
 
 /* ---- 2. FLOATING PILL NAV ACTIVE TAB MONITORING & SCROLL REVEAL ---- */
 const pillLinks = document.querySelectorAll('.pill-link');
@@ -65,7 +85,7 @@ const sections = [
 ];
 
 const updatePillNav = () => {
-  const currentScrollY = window.scrollY;
+  const currentScrollY = getScrollY();
 
   // Reveal floating navbar only after scrolling down from initial hero poster view
   if (pillNavContainer) {
@@ -76,12 +96,8 @@ const updatePillNav = () => {
     }
   }
 
-  const scrollPosition = currentScrollY + 250;
-  
   sections.forEach(section => {
     if (!section.element) return;
-    const top = section.element.offsetTop + window.innerHeight; // compensate for 100vh spacer
-    const height = section.element.offsetHeight;
     
     // Calculate effective section bounds
     const elementRect = section.element.getBoundingClientRect();
@@ -98,7 +114,9 @@ const updatePillNav = () => {
   });
 };
 
-window.addEventListener('scroll', updatePillNav, { passive: true });
+window.addEventListener('scroll', () => {
+  window.requestAnimationFrame(updatePillNav);
+}, { passive: true });
 updatePillNav();
 
 /* ---- 3. BOTTOM TAB ICON SWITCHER WITH GLOWING DOT (IMAGE 3) ---- */
@@ -140,21 +158,17 @@ tabButtons.forEach(btn => {
 /* ---- 4. SCROLL REVEAL (INTERSECTION OBSERVER) ---- */
 const revealElements = document.querySelectorAll('.reveal-up, .reveal-stagger');
 
-if (prefersReducedMotion) {
-  revealElements.forEach(el => el.classList.add('visible'));
-} else {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, idx) => {
-      if (entry.isIntersecting) {
-        const delay = entry.target.classList.contains('reveal-stagger') ? (idx % 4) * 100 : 0;
-        setTimeout(() => entry.target.classList.add('visible'), delay);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, idx) => {
+    if (entry.isIntersecting) {
+      const delay = entry.target.classList.contains('reveal-stagger') ? (idx % 4) * 100 : 0;
+      setTimeout(() => entry.target.classList.add('visible'), delay);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  revealElements.forEach(el => observer.observe(el));
-}
+revealElements.forEach(el => observer.observe(el));
 
 /* ---- 5. SMOOTH ANCHOR LINK SCROLLING ---- */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -164,11 +178,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     if (target) {
       e.preventDefault();
       const offset = 80;
-      // Adjust scroll calculation based on whether target is before or after spacer
-      const targetTop = target.getBoundingClientRect().top + window.scrollY - offset;
+      const targetTop = target.getBoundingClientRect().top + getScrollY() - offset;
       window.scrollTo({
         top: targetTop,
-        behavior: prefersReducedMotion ? 'auto' : 'smooth'
+        behavior: 'smooth'
       });
     }
   });
