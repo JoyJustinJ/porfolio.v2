@@ -116,6 +116,37 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   }
 }
 
+/* Signature Horizontal Slide-In Entrance Keyframes */
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-180px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(180px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-in-right {
+  animation: slideInFromRight 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .giant-line {
   font-family: var(--font-sans);
   font-weight: 900;
@@ -167,10 +198,84 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   mix-blend-mode: multiply;
   filter: drop-shadow(0 4px 24px rgba(107, 28, 28, 0.18)) drop-shadow(0 16px 48px rgba(0, 0, 0, 0.30));
   transform: translateY(16px);
-  will-change: transform;
+  will-change: transform, opacity;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform: translateZ(0);
+  transition: opacity 0.2s ease;
+}
+
+/* Particle Canvas Overlay */
+.hero-particle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Cinematic Full-Bleed Hero Background — Only active in cinematic mode */
+.collage-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0;
+  display: none;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.5s ease;
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+body:not(.cinematic-mode) .collage-wrapper {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.hero-collage-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+
+/* Subtle cinematic edge vignette & bottom fade overlay */
+.collage-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 95% 85% at 50% 45%, transparent 50%, rgba(0, 0, 0, 0.22) 80%, rgba(0, 0, 0, 0.55) 100%),
+              linear-gradient(to bottom, rgba(0, 0, 0, 0.22) 0%, transparent 15%, transparent 75%, rgba(0, 0, 0, 0.75) 100%);
+  pointer-events: none;
+}
+
+/* Foreground Cinematic Person Cutout — Positioned in front of typography */
+.hero-cinematic-cutout {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  z-index: 3;
+  will-change: transform, opacity;
+  display: none;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+body:not(.cinematic-mode) .hero-cinematic-cutout {
+  display: none !important;
 }
 
 /* ============================================================
@@ -249,7 +354,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 .hero-viewport-spacer {
-  height: 100vh;
+  height: 175vh;
   width: 100%;
   pointer-events: none;
   background: transparent;

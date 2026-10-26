@@ -22,6 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="cinematic-theme.css" />
 </head>
 <body>
 
@@ -29,12 +30,17 @@
        FIXED PARALLAX HERO BACKGROUND (TYPOGRAPHY + REAL PORTRAIT OVERLAY)
        ============================================================ -->
   <div class="fixed-hero-bg" aria-hidden="true">
+    <div class="collage-wrapper" id="parallax-collage-wrapper" aria-hidden="true">
+      <img src="joy_hero_cinematic_bg.png" alt="Joy Justin J Cinematic Collage" class="hero-collage-img" id="parallax-collage-img" />
+    </div>
     <div class="giant-text-container">
       <div class="giant-line text-top" id="parallax-text-top">JOY</div>
       <div class="giant-line text-bottom" id="parallax-text-bottom">JUSTIN J</div>
     </div>
     <div class="profile-stage">
+      <canvas id="hero-particle-canvas" class="hero-particle-canvas" aria-hidden="true"></canvas>
       <img src="joy_profile.png" alt="Joy Justin J" class="hero-profile-img" id="parallax-profile-img" />
+      <img src="joy_cinematic_cutout.png" alt="Joy Justin J Cinematic Cutout" class="hero-cinematic-cutout" id="parallax-cinematic-cutout" />
     </div>
   </div>
 
@@ -110,7 +116,7 @@
       </section>
 
       <!-- PROFESSIONAL AND ACADEMIC TICKER -->
-      <section class="ticker-section" aria-label="Professional and academic experience">
+      <section id="ticker" class="ticker-section" aria-label="Professional and academic experience">
         <div class="ticker-header">
           <span class="section-eyebrow">EXPERIENCE & EDUCATION</span>
           <h2 class="section-heading">Organizations I've <span class="text-slate-500">worked with.</span></h2>
@@ -576,5 +582,6 @@
   </div>
 
   <script src="script.js"></script>
+  <script src="cinematic.js"></script>
 </body>
 </html>
